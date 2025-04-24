@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "venus",
+            "request": "launch",
+            "name": "Debug current file",
+            "program": "${file}",
+            "stopOnEntry": true,
+            "openViews": [ "LED Matrix" ]
+        }
+    ]
+}
