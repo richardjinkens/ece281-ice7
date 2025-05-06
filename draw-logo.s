@@ -12,25 +12,25 @@ main:
     li a0, 0x100    # a0 is memory address of I/O for individual LED
     la s0, logo     # s0 is global ROM address for LED color values
     li s1, 0        # s1 is current LED row
-    li              # s2 is current LED column
+    li s2, 0             # s2 is current LED column
     li s3, 10       # s3 is number of LED rows/columns
 light_column:
     lw a2, 0(s0)    # a2 = next RGB color value from ROM 
     slli a1, s2, 16 # a1 gets current row in bits 31-16
     or a1, a1, s1   # a1 gets current column in bits 15-0
     ecall           # Perform OS I/O to set individual led (a0 = 0x100)
-    addi            # Increment color tracker by one word
-    addi            # Increment row
-    beq             # Done with that column, branch to next_column
-                    # Not done, jump back to light_column
+    addi s0, s0, 4           # Increment color tracker by one word
+    addi s1, s1, 1           # Increment row
+    beq  s1, s3, next_column           # Done with that column, branch to next_column
+    j light_column                # Not done, jump back to light_column
 
 next_column:
     addi s2, s2, 1  # Increment current LED column
-                    # all columns complete, branch to done
+    beq s2, s3, done                # all columns complete, branch to done
     li s1, 0        # Reset column to 0
     li a0, 0x100    # Reset a0 to LED board address
-                    # Reset a1 to 0
-                    # Jump to light_column
+    li a1, 0                # Reset a1 to 0
+    j light_column                # Jump to light_column
     
 done:
     li a0, 10       # Set syscall for program exit
